@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials"
 import connectDb from "./lib/db"
 import User from "./models/user.model"
 import bcrypt from "bcryptjs"
+import Google from "next-auth/providers/google"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -41,8 +42,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       },
     }),
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET
+    })
   ],
   callbacks: {
+    async signIn({user,account}) {
+      if(account?.provider =="google") {
+        await connectDb()
+        let dbUser = await User.findOne({email:user.email})
+        if(!dbUser) {
+          dbUser = await User.create({
+            email: user.email,
+            name: user.name,
+            image: user.image
+            
+          })
+        }
+        user.id = dbUser._id.toString()
+        user.role = dbUser.role
+      }
+      return true
+    },
     
     async jwt({token, user}) {
       if(user) {
