@@ -8,8 +8,9 @@ export async function POST(req:NextRequest) {
     await connectDb()
     const {role,mobile} = await req.json()
     const session = await auth()
-    const user = await User.findOneAndUpdate({email:session?.user?.email},{role,mobile},
-      {new:true}
+    const user = await User.findOneAndUpdate({email:session?.user?.email},
+      {role,mobile},
+      {returnDocument: "after"}
     )
     if(!user) {
       return NextResponse.json(

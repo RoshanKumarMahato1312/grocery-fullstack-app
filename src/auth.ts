@@ -66,15 +66,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true
     },
     
-    async jwt({token, user}) {
-      if(user) {
-        token.id = user.id,
-        token.name = user.name,
-        token.email = user.email,
-        token.role = user.role
+    async jwt({ token, user }) {
+  
+  if (user) {
+    token.id = user.id
+  }
 
-      }
-      return token
+  await connectDb()
+  const dbUser = await User.findById(token.id).lean()
+
+  if (dbUser) {
+    token.name = dbUser.name
+    token.email = dbUser.email
+    token.role = dbUser.role
+  }
+
+  return token
+
 
     },
     async session({session, token}) {

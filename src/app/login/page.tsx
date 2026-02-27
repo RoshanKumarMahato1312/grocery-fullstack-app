@@ -23,16 +23,24 @@ function Login() {
     e.preventDefault()
     setLoading(true)
     try {
-      await signIn("credentials",{
-        email,password
+      const res = await signIn("credentials",{
+        email,
+        password,
+        redirect:false
       })
-      router.push("/")
-      setLoading(false)
-    } catch (error) {
-      console.log(error)
-      setLoading(false)
+
+       if (res?.ok) {
+      router.replace("/") // replace is better than push
+    } else {
+      console.log("Login failed")
     }
+
+  } catch (error) {
+    console.log(error)
+  } finally {
+    setLoading(false)
   }
+}
   
   return (
     <div className='flex flex-col items-center justify-center min-h-screen px-6 py-10 bg-white relative'>
