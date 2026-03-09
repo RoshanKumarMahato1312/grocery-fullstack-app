@@ -107,7 +107,9 @@ function Nav({user}:{user:IUser}) {
                 className='w-full outline-none text-gray-700'
                 placeholder='search groceries...'
               />
-              <button onClick={()=>setSearchBarOpen(false)}>
+              <button
+              aria-label="Close Search bar"
+              onClick={()=>setSearchBarOpen(false)}>
                 <X className='text-gray-500 w-5 h-5'/>
               </button>
             </motion.div>
