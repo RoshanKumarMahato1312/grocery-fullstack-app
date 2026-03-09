@@ -49,7 +49,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async signIn({user,account}) {
-      if(account?.provider =="google") {
+      if(account?.provider === "google") {
         await connectDb()
         let dbUser = await User.findOne({email:user.email})
         if(!dbUser) {
@@ -66,7 +66,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true
     },
     
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
   
   if (user) {
     token.id = user.id
@@ -79,6 +79,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     token.name = dbUser.name
     token.email = dbUser.email
     token.role = dbUser.role
+  }
+
+  if(trigger == "update"){
+    token.role=session.role
   }
 
   return token
@@ -101,7 +105,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     session: {
       strategy: "jwt",
-      maxAge:10*24*60*60*1000
+      maxAge:10*24*60*60
     },
     secret: process.env.AUTH_SECRET
 
