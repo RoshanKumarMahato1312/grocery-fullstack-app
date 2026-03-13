@@ -1,0 +1,34 @@
+import { createSlice } from "@reduxjs/toolkit";
+import mongoose from "mongoose";
+
+interface IUser {
+  _id?:mongoose.Types.ObjectId
+  name: string
+  email: string
+  password?: string
+  mobile?: string
+  role: "user" | "deliveryBoy" | "admin"
+  image: string
+}
+
+interface IUserSlice{
+  userData:IUser | null,
+
+}
+
+const initialState = {
+  userData:null
+}
+
+const userslice = createSlice({
+  name:"user",
+  initialState,
+  reducers:{
+    setUserData:(state,action)=>{
+      state.userData=action.payload
+    }
+  }
+})
+
+export const {setUserData} = userslice.actions
+export default userslice.reducer
